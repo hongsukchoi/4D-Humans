@@ -10,7 +10,7 @@ setup(
         'numpy',
         'torch',
         'torchvision',
-        'pytorch-lightning',
+        'pytorch-lightning<=2.2',
         'smplx==0.1.28',
         'pyrender',
         'opencv-python',
