@@ -1,4 +1,6 @@
 # Specific
+custom_demo_out/
+demo_out/
 /logs*/
 /results/
 /sandbox/

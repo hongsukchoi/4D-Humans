@@ -11,7 +11,7 @@ setup(
         'torch',
         'torchvision',
         'pytorch-lightning<=2.2',
-        'smplx==0.1.28',
+        'smplx',
         'pyrender',
         'opencv-python',
         'yacs',
@@ -25,7 +25,6 @@ setup(
     ],
     extras_require={
         'all': [
-            'detectron2 @ git+https://github.com/facebookresearch/detectron2',
         ],
     },
 )

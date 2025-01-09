@@ -19,6 +19,8 @@ class ViTDetDataset(torch.utils.data.Dataset):
                  cfg: CfgNode,
                  img_cv2: np.array,
                  boxes: np.array,
+                 person_ids: np.array,
+                 frame_idx: int=-1,
                  train: bool = False,
                  **kwargs):
         super().__init__()
@@ -31,12 +33,14 @@ class ViTDetDataset(torch.utils.data.Dataset):
         self.img_size = cfg.MODEL.IMAGE_SIZE
         self.mean = 255. * np.array(self.cfg.MODEL.IMAGE_MEAN)
         self.std = 255. * np.array(self.cfg.MODEL.IMAGE_STD)
+        self.frame_idx = frame_idx
 
         # Preprocess annotations
         boxes = boxes.astype(np.float32)
         self.center = (boxes[:, 2:4] + boxes[:, 0:2]) / 2.0
         self.scale = (boxes[:, 2:4] - boxes[:, 0:2]) / 200.0
-        self.personid = np.arange(len(boxes), dtype=np.int32)
+        self.personid = person_ids
+        # self.personid = np.arange(len(boxes), dtype=np.int32)
 
     def __len__(self) -> int:
         return len(self.personid)
@@ -59,7 +63,7 @@ class ViTDetDataset(torch.utils.data.Dataset):
         if True:
             # Blur image to avoid aliasing artifacts
             downsampling_factor = ((bbox_size*1.0) / patch_width)
-            print(f'{downsampling_factor=}')
+            # print(f'{downsampling_factor=}')
             downsampling_factor = downsampling_factor / 2.0
             if downsampling_factor > 1.1:
                 cvimg  = gaussian(cvimg, sigma=(downsampling_factor-1)/2, channel_axis=2, preserve_range=True)
@@ -81,6 +85,7 @@ class ViTDetDataset(torch.utils.data.Dataset):
         item = {
             'img': img_patch,
             'personid': int(self.personid[idx]),
+            'frame_idx': self.frame_idx,
         }
         item['box_center'] = self.center[idx].copy()
         item['box_size'] = bbox_size
